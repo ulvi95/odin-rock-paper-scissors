@@ -17,53 +17,43 @@ function getComputerChoice()
 
 function playRound(playerSelection, computerSelection)
 {
-    playerSelection = playerSelection.substring(0,1).toUpperCase()
-    + playerSelection.substring(1,playerSelection.length).toLowerCase();
-
-    if(playerSelection !== "Rock" && playerSelection !== "Paper" && playerSelection !== "Scissors")
+    if(playerSelection===computerSelection)
     {
-        return "Error input by Player! Try again";
+        return "The game ended even/drawn. Both of you has chosen " + computerSelection;
     }
     else
     {
-        if(playerSelection===computerSelection)
+        if(playerSelection==="Rock")
         {
-            return "The game ended even/drawn. Both of you has chosen " + computerSelection;
+            if(computerSelection==="Paper")
+            {
+                return "You Lose! Paper beats Rock";
+            }
+            else
+            {
+                return "You Won! Rock beats Scissors";
+            }
         }
-        else
+        else if(playerSelection==="Paper")
         {
-            if(playerSelection==="Rock")
+            if(computerSelection==="Scissors")
             {
-                if(computerSelection==="Paper")
-                {
-                    return "You Lose! Paper beats Rock";
-                }
-                else
-                {
-                    return "You Won! Rock beats Scissors";
-                }
+                return "You Lose! Scissors beats Paper";
             }
-            else if(playerSelection==="Paper")
+            else
             {
-                if(computerSelection==="Scissors")
-                {
-                    return "You Lose! Scissors beats Paper";
-                }
-                else
-                {
-                    return "You Won! Paper beats Rock"
-                }
+                return "You Won! Paper beats Rock"
             }
-            else if(playerSelection==="Scissors")
+        }
+        else if(playerSelection==="Scissors")
+        {
+            if(computerSelection==="Rock")
             {
-                if(computerSelection==="Rock")
-                {
-                    return "You Lose! Rock beats Scissors";
-                }
-                else
-                {
-                    return "You Won! Scissors beats Paper"
-                }
+                return "You Lose! Rock beats Scissors";
+            }
+            else
+            {
+                return "You Won! Scissors beats Paper"
             }
         }
     }
@@ -72,41 +62,71 @@ function playRound(playerSelection, computerSelection)
 let playerScore = 0;
 let computerScore = 0;
 
-function game()
-{
-    let playerSelection = prompt("Write either Rock, Paper, or Scissors");
-    playerSelection = playerSelection.substring(0,1).toUpperCase()
-    + playerSelection.substring(1,playerSelection.length).toLowerCase();
-    let computerSelection = getComputerChoice();
-    console.log(playerSelection);
-    console.log(computerSelection);
-    let result = playRound(playerSelection, computerSelection);
-    console.log(result);
-    return result;
-}
+const buttons = document.querySelectorAll("button");
 
-for (let i = 0; i < 5; i++) {
-    let gamePlayed = game();
-    if(gamePlayed.includes("Lose"))
+buttons.forEach(button =>
+{
+button.addEventListener('click', function() {
+    game(button.textContent);
+}
+);
+}
+);
+
+function game(choice)
+{
+    let playerSelection = choice;
+    let computerSelection = getComputerChoice();
+
+    const playerChoiceElement = document.querySelector("#player");
+    const computerChoiceElement = document.querySelector("#computer");
+    const resultElement = document.querySelector("#result");
+
+    playerChoiceElement.textContent = "Player's choice: " + playerSelection;
+    computerChoiceElement.textContent = "Computer's choice: " + computerSelection;
+    resultElement.textContent = "The result of the round: " + playRound(playerSelection, computerSelection);
+
+    if(resultElement.textContent.includes("Lose"))
     {
         computerScore++;
     }
-    else if(gamePlayed.includes("Won"))
+    else if(resultElement.textContent.includes("Won"))
     {
         playerScore++;
     }
-} 
-let finalResult = "The final result is " + playerScore + " : " + computerScore;
-if(playerScore>computerScore)
-{
-    finalResult+=" You Won!"
+
+    const playerScoreElement = document.querySelector("#playerScore");
+    const computerScoreElement = document.querySelector("#computerScore");
+
+    playerScoreElement.textContent = "Player's score: " + playerScore;
+    computerScoreElement.textContent = "Computer's choice: " + computerScore;
+
+    const totalResultElement = document.querySelector("#totalResult");
+    if(computerScore==5 || playerScore==5)
+    {
+        let finalResult = "The final result is " + playerScore + " : " + computerScore;
+
+        if(playerScore>computerScore)
+        {
+            finalResult+=" You Won!"
+        }
+        else
+        {
+            finalResult+=" You Lost!"
+        }
+
+        totalResultElement.textContent = finalResult;
+
+        playerScore = 0;
+        computerScore = 0;
+
+        playerScoreElement.textContent = "";
+        computerScoreElement.textContent = "";
+    }
+    else
+    {
+        totalResultElement.textContent = "";
+    }
 }
-else if(playerScore<computerScore)
-{
-    finalResult+=" You Lost!"
-}
-else
-{
-    finalResult+=" The game ended drawn!"
-}
-console.log(finalResult)
+
+
